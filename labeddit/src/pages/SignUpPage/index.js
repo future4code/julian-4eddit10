@@ -45,7 +45,9 @@ const SignUpPage = () => {
 
     return (
         <LoginPageContainer>
+
             <h3>Cadastro</h3>
+
             <FormContainer className={classes.root}>
                 <TextField id="standard-basic" label="username" />
                 <TextField id="standard-basic" label="e-mail" />
@@ -53,6 +55,7 @@ const SignUpPage = () => {
                 <Button variant="contained" color="primary">Cadastrar</Button>
                 <Button variant="contained" color="secondary" onClick={goToLogin}>Login</Button>
             </FormContainer>
+            
         </LoginPageContainer>
     )
 };

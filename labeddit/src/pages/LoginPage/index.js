@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import TextField from '@material-ui/core/TextField';
 import { useHistory, useParams } from "react-router-dom";
 import axios from "axios"
+import {useForm} from '../../hooks/useForm'
+
 
 //********* CONTAINER DA PÁGINA   ********** */
 const PageContainer = styled.div`
@@ -50,9 +52,37 @@ const Footer = styled.div``
 
 const LoginPage = (props) => {
     const history = useHistory();
+    const { form, onChange } = useForm({ emailInserido: "Terezinha", senha: "123" });
+
+    const handleInputChange = event => {
+        const { name, value } = event.target;
+        onChange(name, value);
+    };
 
     const onClickEntrar = () => {
-        history.push("/feed");
+        const body = {
+            email: form.emailInserido,
+            password: form.senha
+        }
+        console.log(form.emailInserido, form.senha)
+        axios
+            .post(
+                'https://us-central1-labenu-apis.cloudfunctions.net/labEddit/login',
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            )
+            .then((response) => {
+                localStorage.setItem("token", response.data.token);
+                history.push("/feed");
+                console.log(response)
+            })
+            .catch((error) => {
+                alert(error.message)
+            })
     }
 
     const onClickCadastrar = () => {
@@ -67,9 +97,16 @@ const LoginPage = (props) => {
             </Header>
             <FormContainer>
                 <Input
-                    label="e-mail" />
+                    label="e-mail"
+                    name="emailInserido"
+                    value={form.emailInserido}
+                    onChange={handleInputChange} />
                 <Input
-                    label="senha" />
+                    label="senha"
+                    name="senha"
+                    value={form.senha}
+                    onChange={handleInputChange}
+                    type={"password"} />
                 <BotaoEntrar onClick={onClickEntrar}>Entrar</BotaoEntrar>
             </FormContainer>
             <Footer></Footer>
