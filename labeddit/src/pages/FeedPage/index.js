@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components'
 import TextField from '@material-ui/core/TextField';
 import { useHistory, useParams } from "react-router-dom";
+import axios from "axios"
 
 //********* CONTAINER DA PÁGINA   ********** */
 const PageContainer = styled.div`
@@ -29,10 +30,8 @@ const Header = styled.div`
 
 //********* CRIAR POST ********** */
 const CriarPostContainer = styled.div`
-    border: 1px black solid;
     height:30vh;
     width:100%;
-    background-color:blue;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -41,7 +40,7 @@ const CriarPostContainer = styled.div`
 
 const CriarPostForm = styled.form`
     border: 1px black solid;
-    background-color:yellow;
+    background-color:pink;
     height: fit-content;
     width: 20%;
     display: flex;
@@ -63,9 +62,8 @@ const BotaoPostar = styled.button``
 const FeedContainer = styled.div`
     border: 1px black solid;
     width:80%;
-    height:500px;
+    height:fit-content;
     min-height: 100%;
-    background-color:red;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -81,6 +79,7 @@ const PostContainer = styled.div`
     height:fit-content;
     width:30vw;
     padding: 5vh;
+    margin-top: 5vh;
 `
 const HeaderPost = styled.div``
 
@@ -103,10 +102,49 @@ const BotaoVotos = styled.button`
 `
 
 const ContadoComentario = styled.p``
-
 /*---------------------------- */
 
 const FeedPage = () => {
+    const history = useHistory();
+
+    const [listaPosts, setListaPosts] = useState([])
+
+    useEffect(() => {
+        // Contante que pega o valor de "token" que está salvo no localStorage
+        const token = localStorage.getItem("token");
+        // Condicional que verifiva se a variavel "token" está vazia ou se contém algo,
+        if (token === null) {
+            // caso o token esteja vazio, significa que o usuário precisa validar o login para
+            // salvar o valor do token no localStorage, então ocorre o redirecionamento da rota
+            //para a página de login.
+            history.push("/login");
+        }
+        axios
+            .get('https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts',
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        //pega o valor do token e insere na autorização de requisição
+                        'Authorization': `${token}`
+                    }
+                }
+            )
+            .then(response => {
+                // salva o array de posts que foi retornado pela API em listaPosts"
+                setListaPosts(response.data.posts)
+            })
+            .catch(error => {
+                alert(error)
+            })
+    }, [])
+
+    // Função que redireciona para a página de post individual, recebendo como parâmetro o
+    // id do post clicado
+    const goToPostPage = (id) => {
+        //Redireciona a página mandando o id na URL
+        history.push(`/post/${id}`);
+    }
+
     return (
         <PageContainer>
             <Header></Header>
@@ -118,23 +156,32 @@ const FeedPage = () => {
                 </CriarPostForm>
             </CriarPostContainer>
             <FeedContainer>
-                <PostContainer>
-                    <HeaderPost>
-                        <p>Usuário</p>
-                    </HeaderPost>
-                    <MainPost>
-                        <h1>Titulo</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam efficitur nulla sapien, in tristique sem faucibus quis. Cras sit amet urna volutpat, sagittis eros at, feugiat risus. Nunc vel diam eu ipsum consectetur sollicitudin. Quisque at venenatis elit. Phasellus vestibulum fermentum erat, non imperdiet lorem. Etiam nisi ex, volutpat ac aliquam a, maximus in leo.</p>
-                    </MainPost>
-                    <FooterPost>
-                        <VotosContainer>
-                            <BotaoVotos>+</BotaoVotos>
-                            <p>0</p>
-                            <BotaoVotos>-</BotaoVotos>
-                        </VotosContainer>
-                        <ContadoComentario>0</ContadoComentario>
-                    </FooterPost>
-                </PostContainer>
+                {listaPosts.map((post) => {
+                    return (
+                        <PostContainer>
+                            <HeaderPost>
+                                <p>{post.username}</p>
+                            </HeaderPost>
+                            <MainPost>
+                                <h1>{post.title}</h1>
+                                <p>{post.text}</p>
+                            </MainPost>
+
+                            <FooterPost>
+                                <VotosContainer>
+                                    <BotaoVotos>+</BotaoVotos>
+                                    <p>{post.votesCount}</p>
+                                    <BotaoVotos>-</BotaoVotos>
+                                </VotosContainer>
+                                <ContadoComentario>{post.commentsCount}</ContadoComentario>
+                                {/* o onClick manda o id do post como parâmetro da função goToPostPage */}
+                                <button onClick={() => goToPostPage(post.id)}>Post page</button>
+                            </FooterPost>
+
+                        </PostContainer>
+                    )
+                })}
+
             </FeedContainer>
         </PageContainer>
     )
