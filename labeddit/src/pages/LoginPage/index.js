@@ -5,6 +5,8 @@ import { useHistory, useParams } from "react-router-dom";
 import axios from "axios"
 import {useForm} from '../../hooks/useForm'
 
+
+//********* CONTAINER DA PÁGINA   ********** */
 const PageContainer = styled.div`
     width:100vw;
     height: 100vh;
@@ -15,19 +17,22 @@ const PageContainer = styled.div`
     justify-content: space-between;
     align-items: center;
 `
+/*---------------------------- */
 
+//********* CONTAINER DO HEADER   ********** */
 const Header = styled.div`
     border: 1px black solid;
     width:100%;
     height: 12%;
     display: flex;
     justify-content: center;
-
 `
 
 const BotaoCadastrar = styled.button``
+/*---------------------------- */
 
-const FormContainer = styled.div`
+//********* CONTAINER DO FORM   ********** */
+const FormContainer = styled.form`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -37,13 +42,13 @@ const FormContainer = styled.div`
     width:30%;
     padding:3%;
 `
-
-const Input = styled(TextField)`
-`
-
+const Input = styled(TextField)``
 const BotaoEntrar = styled.button``
+/*---------------------------- */
 
+//********* CONTAINER DO FOOTER   ********** */
 const Footer = styled.div``
+/*---------------------------- */
 
 const LoginPage = (props) => {
     const history = useHistory();
