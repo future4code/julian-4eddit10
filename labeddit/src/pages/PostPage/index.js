@@ -5,6 +5,7 @@ import Comments from './Comments';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { useHistory } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -38,9 +39,15 @@ const CommentsContainer = styled.div`
 `
 const PostPage = () => {
     const classes = useStyles();
+    const history = useHistory();
+
+    const goToFeed = () => {
+        history.push('/feed');
+    }
+
     return (
         <PostPageContainer>
-
+            <button onClick={goToFeed}>Voltar para Feed</button>
             <Post>
                 <h2>Título</h2>
                 <h3>usuário</h3>
