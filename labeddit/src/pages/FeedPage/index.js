@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import TextField from '@material-ui/core/TextField';
 import { useHistory, useParams } from "react-router-dom";
 import axios from "axios"
+import { useForm } from '../../hooks/useForm'
+
 
 //********* CONTAINER DA PÁGINA   ********** */
 const PageContainer = styled.div`
@@ -27,7 +29,6 @@ const Header = styled.div`
 `
 /*---------------------------- */
 
-
 //********* CRIAR POST ********** */
 const CriarPostContainer = styled.div`
     height:30vh;
@@ -37,7 +38,6 @@ const CriarPostContainer = styled.div`
     justify-content: center;
     align-items: center;
 `
-
 const CriarPostForm = styled.form`
     border: 1px black solid;
     background-color:pink;
@@ -49,11 +49,8 @@ const CriarPostForm = styled.form`
     align-items: center;
     padding:1%;
 `
-
 const InputTitulo = styled.input``
-
-const InputTexto = styled.input``
-
+const InputTexto = styled.textarea``
 const BotaoPostar = styled.button``
 /*---------------------------- */
 
@@ -82,41 +79,36 @@ const PostContainer = styled.div`
     margin-top: 5vh;
 `
 const HeaderPost = styled.div``
-
 const MainPost = styled.div``
-
 const FooterPost = styled.div`
     display:flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 5vh;;
 `
-
 const VotosContainer = styled.div`
     display:flex;
 `
-
 const BotaoVotos = styled.button`
     width:30px;
     height: 30px;
 `
-
 const ContadoComentario = styled.p``
 /*---------------------------- */
 
 const FeedPage = () => {
     const history = useHistory();
-
     const [listaPosts, setListaPosts] = useState([])
+    const { form, onChange } = useForm({ titulo: "", texto: "" });
+    const token = localStorage.getItem("token");
+
+    const handleInputChange = event => {
+        const { name, value } = event.target;
+        onChange(name, value);
+    };
 
     useEffect(() => {
-        // Contante que pega o valor de "token" que está salvo no localStorage
-        const token = localStorage.getItem("token");
-        // Condicional que verifiva se a variavel "token" está vazia ou se contém algo,
         if (token === null) {
-            // caso o token esteja vazio, significa que o usuário precisa validar o login para
-            // salvar o valor do token no localStorage, então ocorre o redirecionamento da rota
-            //para a página de login.
             history.push("/login");
         }
         axios
@@ -124,13 +116,11 @@ const FeedPage = () => {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        //pega o valor do token e insere na autorização de requisição
                         'Authorization': `${token}`
                     }
                 }
             )
             .then(response => {
-                // salva o array de posts que foi retornado pela API em listaPosts"
                 setListaPosts(response.data.posts)
             })
             .catch(error => {
@@ -138,20 +128,52 @@ const FeedPage = () => {
             })
     }, [])
 
-    // Função que redireciona para a página de post individual, recebendo como parâmetro o
-    // id do post clicado
     const goToPostPage = (id) => {
-        //Redireciona a página mandando o id na URL
         history.push(`/post/${id}`);
+    }
+
+    const onClickPostar = event => {
+        event.preventDefault();
+        const body = {
+            title: form.titulo,
+            text: form.texto
+        }
+        console.log(form.titulo, form.texto)
+        if ((form.titulo !== '')&&(form.texto !== '')) {
+            axios
+                .post(
+                    'https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts',
+                    body,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`
+                        }
+                    }
+                )
+                .then((response) => {
+                    alert("Post publicado!")
+                    window.location.reload()
+                })
+                .catch((error) => {
+                    alert(error.message)
+                })
+        }
     }
 
     return (
         <PageContainer>
             <Header></Header>
             <CriarPostContainer>
-                <CriarPostForm>
-                    <InputTitulo></InputTitulo>
-                    <InputTexto></InputTexto>
+                <CriarPostForm onSubmit={onClickPostar}>
+                    <InputTitulo
+                        name="titulo"
+                        value={form.titulo}
+                        onChange={handleInputChange} />
+                    <InputTexto
+                        name="texto"
+                        value={form.texto}
+                        onChange={handleInputChange}></InputTexto>
                     <BotaoPostar>Postar</BotaoPostar>
                 </CriarPostForm>
             </CriarPostContainer>
