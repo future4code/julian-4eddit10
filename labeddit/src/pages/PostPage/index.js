@@ -7,6 +7,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -40,6 +42,7 @@ const CommentsContainer = styled.div`
 `
 const PostPage = () => {
     const classes = useStyles();
+    const history = useHistory();
     const pathParams = useParams();
     const [post, setPost] = useState([]); 
     const [comentarios, setComentarios] = useState([])
@@ -64,9 +67,15 @@ const PostPage = () => {
         
     }, [])
 
+    
+
+    const goToFeed = () => {
+        history.push('/feed');
+    }
+
     return (
         <PostPageContainer>
-
+            <button onClick={goToFeed}>Voltar para Feed</button>
             <Post>
                 <h2>{post.title}</h2>
                 <h3>{post.username}</h3>
