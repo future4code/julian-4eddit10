@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import LikeBar from './LikeBar';
 import Comments from './Comments';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { useParams } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -38,16 +40,37 @@ const CommentsContainer = styled.div`
 `
 const PostPage = () => {
     const classes = useStyles();
+    const pathParams = useParams();
+    const [post, setPost] = useState([]); 
+    const [comentarios, setComentarios] = useState([])
+    
+
+    const postDetails = async () => {
+        try {
+            const response = await axios.get(`https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts/${pathParams.idPost}`, {
+                headers: {
+                    "Authorization": localStorage.token
+            }})
+            setPost(response.data.post)
+            setComentarios(response.data.post.comments)
+
+        } catch (error) {
+            console.log("ERROR")
+        }
+    }
+
+    useEffect(() => {
+        postDetails();
+        
+    }, [])
+
     return (
         <PostPageContainer>
 
             <Post>
-                <h2>Título</h2>
-                <h3>usuário</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    Quisque ut purus in ligula porttitor commodo. 
-                    Aliquam eleifend leo vel posuere elementum. 
-                    Nam quis nisl bibendum, euismod nibh non, laoreet dolor. </p>
+                <h2>{post.title}</h2>
+                <h3>{post.username}</h3>
+                <p>{post.text}</p>
                 <LikeBar />
             </Post>
 
@@ -57,10 +80,8 @@ const PostPage = () => {
             </FormContainer>
             
             <CommentsContainer>
-                <p>3 Comentários:</p>
-                <Comments />
-                <Comments />
-                <Comments />
+                <p>{comentarios.length} Comentários:</p>
+                <Comments comments={comentarios}/>
             </CommentsContainer>
             
         </PostPageContainer>

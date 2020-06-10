@@ -6,8 +6,12 @@ import LikeBar from './LikeBar';
 const Container = styled.div`
     margin: 1rem;
 `
+const List = styled.div`
+    margin: 1rem;
 
-const Comment = styled.div`
+`
+
+const CommentBox = styled.div`
     width: 100%;
     height: 6.5rem;
     border: 1px solid black;
@@ -17,17 +21,22 @@ const Comment = styled.div`
 
 `
 
-const Comments = () => {
+const Comments = ({comments}) => {
+    console.log(comments)
     return (
         <Container>
-
-            <Comment>
-                <h4>usuário</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                        Quisque ut purus in ligula porttitor commodo.</p>            
-            </Comment>
-
-            <LikeBar />
+        
+                {comments.map(comment => {
+                    return (
+                        <List>
+                            <CommentBox>
+                                <h4>{comment.username}</h4>
+                                <p>{comment.text}</p>
+                            </CommentBox>
+                            <LikeBar />
+                        </List>
+                    )
+                })}
 
         </Container>
     )
