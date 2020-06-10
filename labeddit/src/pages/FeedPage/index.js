@@ -101,7 +101,7 @@ const FeedPage = () => {
     const [listaPosts, setListaPosts] = useState([])
     const { form, onChange } = useForm({ titulo: "", texto: "" });
     const token = localStorage.getItem("token");
-
+    const [teste, setTeste] = useState(0)
     const handleInputChange = event => {
         const { name, value } = event.target;
         onChange(name, value);
@@ -111,6 +111,10 @@ const FeedPage = () => {
         if (token === null) {
             history.push("/login");
         }
+        pegaPosts()
+    }, [])
+
+    const pegaPosts = () => {
         axios
             .get('https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts',
                 {
@@ -126,7 +130,7 @@ const FeedPage = () => {
             .catch(error => {
                 alert(error)
             })
-    }, [])
+    }
 
     const goToPostPage = (id) => {
         history.push(`/post/${id}`);
@@ -139,7 +143,7 @@ const FeedPage = () => {
             text: form.texto
         }
         console.log(form.titulo, form.texto)
-        if ((form.titulo !== '')&&(form.texto !== '')) {
+        if ((form.titulo !== '') && (form.texto !== '')) {
             axios
                 .post(
                     'https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts',
@@ -159,6 +163,31 @@ const FeedPage = () => {
                     alert(error.message)
                 })
         }
+    }
+
+    const onClickVotar = (id, voto) => {
+        const body = {
+            "direction": voto
+        }        
+        axios
+            .put(
+                `https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts/${id}/vote`,
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`
+                    }
+                }
+            )
+            .then((response) => {
+                alert("foi!")
+                pegaPosts()
+            })
+            .catch((error) => {
+                alert(error.message)
+            })
+
     }
 
     return (
@@ -191,9 +220,9 @@ const FeedPage = () => {
 
                             <FooterPost>
                                 <VotosContainer>
-                                    <BotaoVotos>+</BotaoVotos>
+                                    <BotaoVotos onClick={() => onClickVotar(post.id, 1)}>+</BotaoVotos>
                                     <p>{post.votesCount}</p>
-                                    <BotaoVotos>-</BotaoVotos>
+                                    <BotaoVotos onClick={() => onClickVotar(post.id, -1)}>-</BotaoVotos>
                                 </VotosContainer>
                                 <ContadoComentario>{post.commentsCount}</ContadoComentario>
                                 {/* o onClick manda o id do post como parâmetro da função goToPostPage */}
