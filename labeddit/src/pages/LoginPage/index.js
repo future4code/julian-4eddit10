@@ -59,7 +59,8 @@ const LoginPage = (props) => {
         onChange(name, value);
     };
 
-    const onClickEntrar = () => {
+    const onClickEntrar = event => {
+        event.preventDefault();
         const body = {
             email: form.emailInserido,
             password: form.senha
@@ -95,7 +96,7 @@ const LoginPage = (props) => {
             <Header>
                 <BotaoCadastrar onClick={onClickCadastrar}>Cadastrar-se</BotaoCadastrar>
             </Header>
-            <FormContainer>
+            <FormContainer onSubmit={onClickEntrar}>
                 <Input
                     label="e-mail"
                     name="emailInserido"
@@ -107,7 +108,7 @@ const LoginPage = (props) => {
                     value={form.senha}
                     onChange={handleInputChange}
                     type={"password"} />
-                <BotaoEntrar onClick={onClickEntrar}>Entrar</BotaoEntrar>
+                <BotaoEntrar>Entrar</BotaoEntrar>
             </FormContainer>
             <Footer></Footer>
         </PageContainer>
