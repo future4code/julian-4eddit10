@@ -22,14 +22,13 @@ const CommentBox = styled.div`
 `
 
 const Comments = ({comments}) => {
-    console.log(comments)
     return (
         <Container>
         
                 {comments.map(comment => {
                     return (
-                        <List>
-                            <CommentBox>
+                        <List key={comment.id}>
+                            <CommentBox >
                                 <h4>{comment.username}</h4>
                                 <p>{comment.text}</p>
                             </CommentBox>
