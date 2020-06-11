@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import { useHistory, useParams } from "react-router-dom";
 import axios from "axios"
 import { useForm } from '../../hooks/useForm'
+import LikeButtons from '../../components/LikeButtons';
 
 
 //********* CONTAINER DA PÁGINA   ********** */
@@ -86,17 +87,12 @@ const FooterPost = styled.div`
     align-items: center;
     margin-top: 5vh;;
 `
-const VotosContainer = styled.div`
-    display:flex;
-`
-const BotaoVotos = styled.button`
-    width:30px;
-    height: 30px;
-`
+
+
 const ContadoComentario = styled.p``
 /*---------------------------- */
 
-const FeedPage = () => {
+const FeedPage = (props) => {
     const history = useHistory();
     const [listaPosts, setListaPosts] = useState([])
     const { form, onChange } = useForm({ titulo: "", texto: "" });
@@ -165,7 +161,14 @@ const FeedPage = () => {
         }
     }
 
-    const onClickVotar = (id, voto) => {
+    const onClickVotar = (id, userVoteDirection, voto) => {
+        let aux = userVoteDirection + voto
+        if (aux == 2){
+            voto = 0
+        }
+        if (aux == -2){
+            voto = 0
+        }
         const body = {
             "direction": voto
         }        
@@ -187,7 +190,6 @@ const FeedPage = () => {
             .catch((error) => {
                 alert(error.message)
             })
-
     }
 
     return (
@@ -208,6 +210,22 @@ const FeedPage = () => {
             </CriarPostContainer>
             <FeedContainer>
                 {listaPosts.map((post) => {
+                    let likeAtivadoValue = false;
+                    let dislikeAtivadoValue = false;
+                    if (post.userVoteDirection == 1){
+                        likeAtivadoValue = true
+                        dislikeAtivadoValue = false
+                    }
+                    if (post.userVoteDirection == -1) {
+                        likeAtivadoValue = false
+                        dislikeAtivadoValue = true
+                    }
+                    if (post.userVoteDirection == 0) {
+                        likeAtivadoValue = false
+                        dislikeAtivadoValue = false
+                    }
+                    
+
                     return (
                         <PostContainer>
                             <HeaderPost>
@@ -219,13 +237,14 @@ const FeedPage = () => {
                             </MainPost>
 
                             <FooterPost>
-                                <VotosContainer>
-                                    <BotaoVotos onClick={() => onClickVotar(post.id, 1)}>+</BotaoVotos>
-                                    <p>{post.votesCount}</p>
-                                    <BotaoVotos onClick={() => onClickVotar(post.id, -1)}>-</BotaoVotos>
-                                </VotosContainer>
+                                    <LikeButtons 
+                                    votesCount={post.votesCount}
+                                    likeValue={likeAtivadoValue}
+                                    dislikeValue={dislikeAtivadoValue}
+                                    onClickButtons={onClickVotar}
+                                    id={post.id}
+                                    userVoteDirection={post.userVoteDirection}></LikeButtons>
                                 <ContadoComentario>{post.commentsCount}</ContadoComentario>
-                                {/* o onClick manda o id do post como parâmetro da função goToPostPage */}
                                 <button onClick={() => goToPostPage(post.id)}>Post page</button>
                             </FooterPost>
 
