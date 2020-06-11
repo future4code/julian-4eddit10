@@ -77,9 +77,9 @@ const LoginPage = (props) => {
                 }
             )
             .then((response) => {
-                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("token", response.data.token)
+                localStorage.setItem("username", response.data.user.username);
                 history.push("/feed");
-                console.log(response)
             })
             .catch((error) => {
                 alert(error.message)

@@ -8,6 +8,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { useParams } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
+import { useForm } from '../../hooks/useForm';
+
 
 
 
@@ -46,6 +48,7 @@ const PostPage = () => {
     const pathParams = useParams();
     const [post, setPost] = useState([]); 
     const [comentarios, setComentarios] = useState([])
+    const { form, onChange } = useForm({comment: ''})
     
 
     const postDetails = async () => {
@@ -67,8 +70,26 @@ const PostPage = () => {
         
     }, [])
 
-    
+    const handleInputChange = event => {
+        const { name, value } = event.target;
+        onChange(name, value);
+    };
 
+    const sendComment = async () => {
+        const body = {
+            text: form.comment
+        }
+        try {
+            await axios.post(`https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts/${pathParams.idPost}/comment`, body, {
+                headers: {
+                    "Authorization": localStorage.token
+            }})
+            alert("Comentário enviado com sucesso!")
+            postDetails();
+        } catch (err) {
+            console.error(err)
+        }
+    }
     const goToFeed = () => {
         history.push('/feed');
     }
@@ -84,8 +105,8 @@ const PostPage = () => {
             </Post>
 
             <FormContainer className={classes.root}>
-                <TextField id="standard-basic" label="Comentário" />
-                <Button variant="contained" color="primary">Enviar</Button>
+                <TextField label="Comentário" name="comment" onChange={handleInputChange} value={form.comment}/>
+                <Button variant="contained" color="primary" onClick={sendComment}>Enviar</Button>
             </FormContainer>
             
             <CommentsContainer>
