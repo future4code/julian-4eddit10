@@ -7,6 +7,7 @@ import { useForm } from '../../hooks/useForm'
 import LikeButtons from '../../components/LikeButtons';
 import Header from '../../components/Header'
 import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
+import { useProducts } from '../../hooks/useProducts';
 
 //********* CONTAINER DA PÁGINA   ********** */
 const PageContainer = styled.div`
@@ -155,10 +156,9 @@ const Comentario = styled.button`
 
 const FeedPage = (props) => {
     const history = useHistory();
-    const [listaPosts, setListaPosts] = useState([])
     const { form, onChange } = useForm({ titulo: "", texto: "" });
     const token = localStorage.getItem("token");
-    const [teste, setTeste] = useState(0)
+    const posts = useProducts();
     const handleInputChange = event => {
         const { name, value } = event.target;
         onChange(name, value);
@@ -168,26 +168,9 @@ const FeedPage = (props) => {
         if (token === null) {
             history.push("/");
         }
-        pegaPosts()
     }, [])
 
-    const pegaPosts = () => {
-        axios
-            .get('https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts',
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `${token}`
-                    }
-                }
-            )
-            .then(response => {
-                setListaPosts(response.data.posts)
-            })
-            .catch(error => {
-                alert(error)
-            })
-    }
+    
 
     const goToPostPage = (id) => {
         history.push(`/post/${id}`);
@@ -246,7 +229,7 @@ const FeedPage = (props) => {
             )
             .then((response) => {
                 alert("foi!")
-                pegaPosts()
+                //window.location.reload()
             })
             .catch((error) => {
                 alert(error.message)
@@ -279,7 +262,7 @@ const FeedPage = (props) => {
                 </CriarPostForm>
             </CriarPostContainer>
             <FeedContainer>
-                {listaPosts.map((post) => {
+                {posts.map((post) => {
                     let likeAtivadoValue = false;
                     let dislikeAtivadoValue = false;
                     if (post.userVoteDirection == 1) {
