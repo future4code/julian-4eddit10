@@ -5,7 +5,8 @@ import { useHistory, useParams } from "react-router-dom";
 import axios from "axios"
 import { useForm } from '../../hooks/useForm'
 import LikeButtons from '../../components/LikeButtons';
-
+import Header from '../../components/Header'
+import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
 
 //********* CONTAINER DA PÁGINA   ********** */
 const PageContainer = styled.div`
@@ -17,18 +18,10 @@ const PageContainer = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    background-color: #162635;
 `
 /*---------------------------- */
 
-//********* CONTAINER DO HEADER   ********** */
-const Header = styled.div`
-    border: 1px black solid;
-    width:100%;
-    height: 12vh;
-    display: flex;
-    justify-content: center;
-`
-/*---------------------------- */
 
 //********* CRIAR POST ********** */
 const CriarPostContainer = styled.div`
@@ -40,25 +33,50 @@ const CriarPostContainer = styled.div`
     align-items: center;
 `
 const CriarPostForm = styled.form`
-    border: 1px black solid;
-    background-color:pink;
+    background-color:white;
     height: fit-content;
-    width: 20%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding:1%;
+    width:30vw;
+    border-radius: 5px;
+    border: none;
+    border-bottom-left-radius: 10px;
 `
-const InputTitulo = styled.input``
-const InputTexto = styled.textarea``
-const BotaoPostar = styled.button``
+const InputTitulo = styled.input`
+    width:100%;
+    height: 14vh;
+    border-radius: 5px;
+    border-bottom-left-radius:0;
+    border-bottom-right-radius:0;
+    border:none;
+    border-bottom: 1px black solid;
+`
+const InputTexto = styled.textarea`
+    width:100%;
+    max-width: 100%;
+    height:100%;
+    border:none;
+
+`
+const BotaoPostar = styled.button`
+    width:100%;
+    border-top-left-radius:0;
+    border-top-right-radius:0;
+    background-color:#00c300;
+    border:none;
+    height: 9vh;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    box-shadow: inset 0 0 7px 2px #000000ab;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+`
 /*---------------------------- */
 
 
 //********* FEED ********** */
 const FeedContainer = styled.div`
-    border: 1px black solid;
     width:80%;
     height:fit-content;
     min-height: 100%;
@@ -72,24 +90,67 @@ const FeedContainer = styled.div`
 
 //********* POST ********** */
 const PostContainer = styled.div`
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
     border: 1px black solid;
-    background-color:pink;
+    background-color:white;
     height:fit-content;
     width:30vw;
-    padding: 5vh;
-    margin-top: 5vh;
+    border-bottom: 1px black solid;
+    height: fit-content;
+    margin-top:4vh;
+    border-radius: 5px;
+
 `
-const HeaderPost = styled.div``
-const MainPost = styled.div``
+const Titulo = styled.h3`
+    font-family: 'Special Elite', cursive;
+`
+const Texto = styled.p`
+    font-family: 'Roboto', sans-serif;
+`
+const HeaderPost = styled.div`
+    font-family: 'Roboto', sans-serif;
+    display:flex;
+    align-items:center;
+    height: 45px;
+    padding:2vh;
+    border-bottom: 1px black solid;
+    box-shadow: inset 0 0 4px 0px #0000006b;
+
+`
+const MainPost = styled.div`
+    height: fit-content;
+    padding:2vh;
+    border-bottom: 1px black solid;
+
+`
 const FooterPost = styled.div`
     display:flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 5vh;;
+    padding:2vh;
+    box-shadow: inset 0 0 4px 0px #0000006b;
+
 `
 
+const ComentarioContainer = styled.div`
+display:flex;
+`
 
-const ContadoComentario = styled.p``
+const ContadoComentario = styled.p`
+margin-right: 1vh;
+`
+
+const Comentario = styled.button`
+    border: none;
+    background-color: transparent;
+    transition: 0.6s;
+    :hover{
+        color:#ec6e00;
+    }
+`
+
 /*---------------------------- */
 
 const FeedPage = (props) => {
@@ -105,7 +166,7 @@ const FeedPage = (props) => {
 
     useEffect(() => {
         if (token === null) {
-            history.push("/login");
+            history.push("/");
         }
         pegaPosts()
     }, [])
@@ -163,15 +224,15 @@ const FeedPage = (props) => {
 
     const onClickVotar = (id, userVoteDirection, voto) => {
         let aux = userVoteDirection + voto
-        if (aux == 2){
+        if (aux == 2) {
             voto = 0
         }
-        if (aux == -2){
+        if (aux == -2) {
             voto = 0
         }
         const body = {
             "direction": voto
-        }        
+        }
         axios
             .put(
                 `https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts/${id}/vote`,
@@ -192,16 +253,25 @@ const FeedPage = (props) => {
             })
     }
 
+    const logout = () => {
+        localStorage.clear();
+        history.push(`/`);
+    }
+
     return (
         <PageContainer>
-            <Header></Header>
+            <Header
+                onClickButton1={logout}
+                ButtonLabel={'Logout'} />
             <CriarPostContainer>
                 <CriarPostForm onSubmit={onClickPostar}>
                     <InputTitulo
+                        placeholder="Título"
                         name="titulo"
                         value={form.titulo}
                         onChange={handleInputChange} />
                     <InputTexto
+                        placeholder="texto"
                         name="texto"
                         value={form.texto}
                         onChange={handleInputChange}></InputTexto>
@@ -212,7 +282,7 @@ const FeedPage = (props) => {
                 {listaPosts.map((post) => {
                     let likeAtivadoValue = false;
                     let dislikeAtivadoValue = false;
-                    if (post.userVoteDirection == 1){
+                    if (post.userVoteDirection == 1) {
                         likeAtivadoValue = true
                         dislikeAtivadoValue = false
                     }
@@ -224,28 +294,28 @@ const FeedPage = (props) => {
                         likeAtivadoValue = false
                         dislikeAtivadoValue = false
                     }
-                    
-
                     return (
                         <PostContainer>
                             <HeaderPost>
                                 <p>{post.username}</p>
                             </HeaderPost>
                             <MainPost>
-                                <h1>{post.title}</h1>
-                                <p>{post.text}</p>
+                                <Titulo>{post.title}</Titulo>
+                                <Texto>{post.text}</Texto>
                             </MainPost>
 
                             <FooterPost>
-                                    <LikeButtons 
+                                <LikeButtons
                                     votesCount={post.votesCount}
                                     likeValue={likeAtivadoValue}
                                     dislikeValue={dislikeAtivadoValue}
                                     onClickButtons={onClickVotar}
                                     id={post.id}
                                     userVoteDirection={post.userVoteDirection}></LikeButtons>
-                                <ContadoComentario>{post.commentsCount}</ContadoComentario>
-                                <button onClick={() => goToPostPage(post.id)}>Post page</button>
+                                <ComentarioContainer>
+                                    <ContadoComentario>{post.commentsCount}</ContadoComentario>
+                                    <Comentario onClick={() => goToPostPage(post.id)}><ChatBubbleIcon /></Comentario>
+                                </ComentarioContainer>
                             </FooterPost>
 
                         </PostContainer>
