@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import LikeBar from './LikeBar';
 import Comments from './Comments';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -9,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import { useParams } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
-
+import Header from '../../components/Header'
 
 
 
@@ -29,19 +28,43 @@ const PostPageContainer = styled.div`
     align-items: center;
 `
 const Post = styled.div`
-    width: 20rem;
+    width: 40rem;
+    
 `
+const Title = styled.h2`
+    font-family: 'Special Elite', cursive;
+    font-size: 3rem;
+    margin: 1rem 0;
+`
+const User = styled.h3`
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+`
+const Text = styled.p`
+    font-size: 1.3rem;
+`
+
 const FormContainer = styled.form`
     display: flex;
     flex-direction: column;
 `
 const CommentsContainer = styled.div`
-    width: 20rem;
+    width: 40rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 `
+const SendButton = styled(Button)`
+    background-color: #ff5722;
+    color: white;
+    :hover {
+        color: #ff5722;
+        background-color: white;
+        border: 1px solid #ff5722;
+    }
+`
+
 const PostPage = () => {
     const classes = useStyles();
     const history = useHistory();
@@ -49,6 +72,7 @@ const PostPage = () => {
     const [post, setPost] = useState([]); 
     const [comentarios, setComentarios] = useState([])
     const { form, onChange } = useForm({comment: ''})
+
     
 
     const postDetails = async () => {
@@ -96,17 +120,18 @@ const PostPage = () => {
 
     return (
         <PostPageContainer>
-            <button onClick={goToFeed}>Voltar para Feed</button>
+            <Header
+                onClickButton1={goToFeed}
+                ButtonLabel={'Feed'} />
             <Post>
-                <h2>{post.title}</h2>
-                <h3>{post.username}</h3>
-                <p>{post.text}</p>
-                <LikeBar />
+                <Title>{post.title}</Title>
+                <User>{post.username}</User>
+                <Text>{post.text}</Text>
             </Post>
 
             <FormContainer className={classes.root}>
                 <TextField label="Comentário" name="comment" onChange={handleInputChange} value={form.comment}/>
-                <Button variant="contained" color="primary" onClick={sendComment}>Enviar</Button>
+                <SendButton variant="contained" onClick={sendComment}>Enviar</SendButton>
             </FormContainer>
             
             <CommentsContainer>
