@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import TextField from '@material-ui/core/TextField';
 import { useHistory, useParams } from "react-router-dom";
 import axios from "axios"
-import {useForm} from '../../hooks/useForm'
-
+import { useForm } from '../../hooks/useForm'
+import Header from '../../components/Header'
 
 //********* CONTAINER DA PÁGINA   ********** */
 const PageContainer = styled.div`
@@ -16,19 +16,9 @@ const PageContainer = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    background-image: url('https://image3.uhdpaper.com/wallpaper-hd/minimalist-nature-forest-mountains-digital-art-uhdpaper.com-hd-36.jpg');
+    background-size: cover;
 `
-/*---------------------------- */
-
-//********* CONTAINER DO HEADER   ********** */
-const Header = styled.div`
-    border: 1px black solid;
-    width:100%;
-    height: 12%;
-    display: flex;
-    justify-content: center;
-`
-
-const BotaoCadastrar = styled.button``
 /*---------------------------- */
 
 //********* CONTAINER DO FORM   ********** */
@@ -37,18 +27,46 @@ const FormContainer = styled.form`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    border: 1px black solid;
-    height:40%;
-    width:30%;
-    padding:3%;
+    border-radius: 16px;
+    box-shadow: inset 0px 0px 20px -8px #0000005c;
+    border: 1px #00000038 solid;
+    height: 45%;
+    width: 30%;
+    padding: 3%;
+    padding-bottom: 5%;
+    padding-top: 5%;
+    background-color: white;
 `
 const Input = styled(TextField)``
-const BotaoEntrar = styled.button``
+
+const BotaoEntrar = styled.button`
+   color: #ec6e00;
+   width: 24vh;
+   height: fit-content;
+   min-height:fit-content;
+   min-width:fit-content;
+   padding:1.5vh;
+   margin-top:8%;
+   background-color:white;
+   border:none;
+   border: 1px #ec6e00 solid;
+   border-radius:3px;
+   font-size:1rem;
+   text-transform: uppercase;
+   transition: 0.7s;
+   :hover{
+    color: white;
+    background-color: #ec6e00;
+    border: 1px #7b7b7b solid;
+   }
+`
 /*---------------------------- */
 
 //********* CONTAINER DO FOOTER   ********** */
 const Footer = styled.div``
 /*---------------------------- */
+
+
 
 const LoginPage = (props) => {
     const history = useHistory();
@@ -86,16 +104,17 @@ const LoginPage = (props) => {
             })
     }
 
-    const onClickCadastrar = () => {
-        history.push("/signup");
+    const goToSignUpPage = () =>{
+        history.push("/signup")
     }
-
+ 
 
     return (
         <PageContainer>
-            <Header>
-                <BotaoCadastrar onClick={onClickCadastrar}>Cadastrar-se</BotaoCadastrar>
-            </Header>
+            <Header
+                ButtonLabel={'Cadastrar-se'}
+                onClickButton1 = {goToSignUpPage}
+            />
             <FormContainer onSubmit={onClickEntrar}>
                 <Input
                     label="e-mail"
