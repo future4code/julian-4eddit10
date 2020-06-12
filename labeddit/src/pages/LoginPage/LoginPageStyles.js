@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
-
+import floresta from '../../image/floresta.jpg'
 //********* CONTAINER DA PÁGINA   ********** */
 export const PageContainer = styled.div`
     width:100vw;
@@ -11,7 +11,7 @@ export const PageContainer = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-image: url('https://image3.uhdpaper.com/wallpaper-hd/minimalist-nature-forest-mountains-digital-art-uhdpaper.com-hd-36.jpg');
+    background-image: url(${floresta});
     background-size: cover;
 `
 /*---------------------------- */
