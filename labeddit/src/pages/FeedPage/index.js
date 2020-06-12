@@ -1,176 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components'
-import TextField from '@material-ui/core/TextField';
-import { useHistory, useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useHistory } from "react-router-dom";
 import axios from "axios"
 import { useForm } from '../../hooks/useForm'
 import LikeButtons from '../../components/LikeButtons';
 import Header from '../../components/Header'
 import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
-import { useProducts } from '../../hooks/useProducts';
-
-//********* CONTAINER DA PÁGINA   ********** */
-const PageContainer = styled.div`
-    width:100vw;
-    height: auto;
-    max-width:100vw;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #162635;
-`
-/*---------------------------- */
-
-
-//********* CRIAR POST ********** */
-const CriarPostContainer = styled.div`
-    height:30vh;
-    width:100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`
-const CriarPostForm = styled.form`
-    background-color:white;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width:30vw;
-    border-radius: 5px;
-    border: none;
-    border-bottom-left-radius: 10px;
-`
-const InputTitulo = styled.input`
-    width:100%;
-    height: 14vh;
-    border-radius: 5px;
-    border-bottom-left-radius:0;
-    border-bottom-right-radius:0;
-    border:none;
-    border-bottom: 1px black solid;
-`
-const InputTexto = styled.textarea`
-    width:100%;
-    max-width: 100%;
-    height:100%;
-    border:none;
-
-`
-const BotaoPostar = styled.button`
-    width:100%;
-    border-top-left-radius:0;
-    border-top-right-radius:0;
-    background-color:#00c300;
-    border:none;
-    height: 9vh;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    box-shadow: inset 0 0 7px 2px #000000ab;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-`
-/*---------------------------- */
-
-
-//********* FEED ********** */
-const FeedContainer = styled.div`
-    width:80%;
-    height:fit-content;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`
-/*---------------------------- */
-
-
-//********* POST ********** */
-const PostContainer = styled.div`
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    border: 1px black solid;
-    background-color:white;
-    height:fit-content;
-    width:30vw;
-    border-bottom: 1px black solid;
-    height: fit-content;
-    margin-top:4vh;
-    border-radius: 5px;
-
-`
-const Titulo = styled.h3`
-    font-family: 'Special Elite', cursive;
-`
-const Texto = styled.p`
-    font-family: 'Roboto', sans-serif;
-`
-const HeaderPost = styled.div`
-    font-family: 'Roboto', sans-serif;
-    display:flex;
-    align-items:center;
-    height: 45px;
-    padding:2vh;
-    border-bottom: 1px black solid;
-    box-shadow: inset 0 0 4px 0px #0000006b;
-
-`
-const MainPost = styled.div`
-    height: fit-content;
-    padding:2vh;
-    border-bottom: 1px black solid;
-
-`
-const FooterPost = styled.div`
-    display:flex;
-    justify-content: space-between;
-    align-items: center;
-    padding:2vh;
-    box-shadow: inset 0 0 4px 0px #0000006b;
-
-`
-
-const ComentarioContainer = styled.div`
-display:flex;
-`
-
-const ContadoComentario = styled.p`
-margin-right: 1vh;
-`
-
-const Comentario = styled.button`
-    border: none;
-    background-color: transparent;
-    transition: 0.6s;
-    :hover{
-        color:#ec6e00;
-    }
-`
-
-/*---------------------------- */
+import { PageContainer, CriarPostContainer, CriarPostForm, InputTitulo, InputTexto, BotaoPostar, FeedContainer, PostContainer, Titulo, Texto, HeaderPost, MainPost, FooterPost, ComentarioContainer, ContadoComentario, Comentario } from './FeedPageStyles';
 
 const FeedPage = (props) => {
     const history = useHistory();
     const { form, onChange } = useForm({ titulo: "", texto: "" });
     const token = localStorage.getItem("token");
-    const posts = useProducts();
+    //let posts = useProducts();
+    const [posts, setPosts] = useState([]); 
     const handleInputChange = event => {
         const { name, value } = event.target;
         onChange(name, value);
     };
 
-    useEffect(() => {
-        if (token === null) {
-            history.push("/");
-        }
-    }, [])
+    const pegaPosts = () => {
+        axios
+            .get('https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts',
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${localStorage.token}`
+                    }
+                }
+            )
+            .then(response => {
+                setPosts(response.data.posts)
+            })
+            .catch(error => {
+                alert(error)
+            })
+            
+    }
 
-    
+    if (token === null) {
+        history.push("/");
+    }
+
+
+    useEffect(() => {
+        
+        pegaPosts()
+    })
+
 
     const goToPostPage = (id) => {
         history.push(`/post/${id}`);
@@ -182,7 +58,6 @@ const FeedPage = (props) => {
             title: form.titulo,
             text: form.texto
         }
-        console.log(form.titulo, form.texto)
         if ((form.titulo !== '') && (form.texto !== '')) {
             axios
                 .post(
@@ -207,10 +82,10 @@ const FeedPage = (props) => {
 
     const onClickVotar = (id, userVoteDirection, voto) => {
         let aux = userVoteDirection + voto
-        if (aux == 2) {
+        if (aux === 2) {
             voto = 0
         }
-        if (aux == -2) {
+        if (aux === -2) {
             voto = 0
         }
         const body = {
@@ -229,7 +104,6 @@ const FeedPage = (props) => {
             )
             .then((response) => {
                 alert("foi!")
-                //window.location.reload()
             })
             .catch((error) => {
                 alert(error.message)
@@ -265,15 +139,15 @@ const FeedPage = (props) => {
                 {posts.map((post) => {
                     let likeAtivadoValue = false;
                     let dislikeAtivadoValue = false;
-                    if (post.userVoteDirection == 1) {
+                    if (post.userVoteDirection === 1) {
                         likeAtivadoValue = true
                         dislikeAtivadoValue = false
                     }
-                    if (post.userVoteDirection == -1) {
+                    if (post.userVoteDirection === -1) {
                         likeAtivadoValue = false
                         dislikeAtivadoValue = true
                     }
-                    if (post.userVoteDirection == 0) {
+                    if (post.userVoteDirection === 0) {
                         likeAtivadoValue = false
                         dislikeAtivadoValue = false
                     }
