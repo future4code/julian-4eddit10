@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useHistory } from "react-router-dom";
 import Tooltip from '@material-ui/core/Tooltip';
-
 
 const HeaderContainer = styled.header`
     background-color:#f5f5f5;
@@ -74,10 +72,7 @@ margin-bottom: 1vh;
 font-size: 1.5em;
 `
 
-
 const Header = (props) => {
-    const history = useHistory();
-
     return (
         <HeaderContainer>
             <LogoContainer>
