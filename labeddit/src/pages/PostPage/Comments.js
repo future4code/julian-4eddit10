@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import LikeBar from './LikeBar';
 
 
 const Container = styled.div`
@@ -12,9 +11,10 @@ const List = styled.div`
 `
 
 const CommentBox = styled.div`
-    width: 100%;
-    height: 6.5rem;
-    border: 1px solid black;
+    width: 40rem;
+    height: 4.5rem;
+    border: 1px solid #9e9e9e;
+    border-radius: 3rem;
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -29,10 +29,9 @@ const Comments = ({comments}) => {
                     return (
                         <List key={comment.id}>
                             <CommentBox >
-                                <h4>{comment.username}</h4>
+                                <h4>{comment.username}:</h4>
                                 <p>{comment.text}</p>
                             </CommentBox>
-                            <LikeBar />
                         </List>
                     )
                 })}
