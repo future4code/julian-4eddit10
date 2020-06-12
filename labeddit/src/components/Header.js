@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from "react-router-dom";
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const HeaderContainer = styled.header`
@@ -80,7 +81,9 @@ const Header = (props) => {
     return (
         <HeaderContainer>
             <LogoContainer>
-                <ImgRaposa src="https://png.pngtree.com/element_our/png_detail/20180926/elegant-flame-unique-animal-fox-logo-vector-png_113190.jpg" />
+                <Tooltip title="abstract PNG Designed By hublot90 from Pngtree.com">
+                    <ImgRaposa src="https://png.pngtree.com/element_our/png_detail/20180926/elegant-flame-unique-animal-fox-logo-vector-png_113190.jpg" />
+                </Tooltip>
                 <Labe>Labe</Labe><Eddit>ddit</Eddit>
             </LogoContainer>
             <ContainerBotoes>
